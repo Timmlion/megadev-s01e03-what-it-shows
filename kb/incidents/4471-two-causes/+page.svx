@@ -1,0 +1,61 @@
+---
+layout: runbook
+title: '#4471 · two causes in one ticket'
+owner: support desk
+status: known
+reviewed: 2026-10-28
+signature: v1.eyJzdWIiOiIzOTEiLCJhdWQiOiJjaGFsbGVuZ2U6d2hhdC1pdC1zaG93cyIsImlhdCI6MTc5MzE5MDUyMiwiZXhwIjoxNzkzMjc2OTIyfQ.ZJVBtdpU7VR7LZ3jnvzVrIccUbSyH0GTEWcLotFVJfI
+---
+
+<script>
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+
+  // The page's signature, from the frontmatter above: the course's ticket, exactly as given.
+  export const signature =
+    'v1.eyJzdWIiOiIzOTEiLCJhdWQiOiJjaGFsbGVuZ2U6d2hhdC1pdC1zaG93cyIsImlhdCI6MTc5MzE5MDUyMiwiZXhwIjoxNzkzMjc2OTIyfQ.ZJVBtdpU7VR7LZ3jnvzVrIccUbSyH0GTEWcLotFVJfI';
+</script>
+
+#4471 was merged on the subject line alone, so it carries two bugs, not one. The table below
+counts them in the export, by tenant locale and channel, with the logic the desk already runs
+(`src/lib/kb/causes.ts` over `src/lib/kb/locales.ts`).
+
+## The two problems
+
+- **parser** — the shared parser reads every date month first, and every tenant on file writes the
+  day first. Reports arrive through the app, by email, and through `booking-v2` forms. Most of the
+  ticket's reports are this one, and it keeps #4471.
+- **hint** — `booking-v3` prints `MM/DD/YYYY` under its date field although the tenant writes the
+  day first. People type what the hint tells them, and the form reads it the other way round.
+  Only the form channel, only the three tenants on `booking-v3`. It was counted as part of #4471
+  and had no ticket of its own.
+
+## Where the tickets are
+
+Both are issues in this page's repo, `Timmlion/megadev-s01e03-what-it-shows`:
+[#1 parser](https://github.com/Timmlion/megadev-s01e03-what-it-shows/issues/1) and
+[#2 hint](https://github.com/Timmlion/megadev-s01e03-what-it-shows/issues/2). Each ticket carries
+the number of reports it covers, counted the same way as the table.
+
+<CauseTable ticket={4471} />
+
+<Callout kind="warn">
+The last column of the table is how the desk read the ticket before this page: the `hint` row says
+it has no ticket. It has one now, in the repo above. Nothing else in the desk's reading changed.
+</Callout>
+
+## Why the merge hid it
+
+Decision 0001 merges on the subject line, and every report about a flipped date matches the same
+few subjects, so both bugs land in one ticket. Intake's tag does not separate them either: it is
+guessed from the reporter's browser, not looked up from the tenant's locale, and it disagrees with
+the tenant more often than not. The tenant directory is the only thing that tells the two apart.
+
+## Lessons
+
+- A merge rule that never reads the body cannot tell two bugs with one symptom apart.
+- Split by where the date is read (parser) and where it is typed (form hint), not by what the
+  reporter saw.
+
+<RenderStamp {signature} />

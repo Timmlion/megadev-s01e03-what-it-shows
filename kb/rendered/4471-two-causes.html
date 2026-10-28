@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>#4471 · two causes in one ticket · support kb</title>
+    <style>
+      :root {
+        --bg: #fbfaf7; --fg: #1d1d1b; --muted: #6b6a66; --line: #e3e0d8;
+        --accent: #2f6f5e; --warn: #b4501f; --warn-bg: #fbeee6; --note-bg: #eef5f2;
+        --mono: ui-monospace, 'Cascadia Code', Menlo, monospace;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #171716; --fg: #ecebe6; --muted: #9c9a93; --line: #34332f;
+          --accent: #6fbfa6; --warn: #f0905d; --warn-bg: #3a2418; --note-bg: #1d2c27;
+        }
+      }
+      body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, sans-serif; }
+      table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.92rem; }
+      th, td { border-bottom: 1px solid var(--line); padding: 0.35rem 0.5rem; text-align: left; }
+      code { font-family: var(--mono); font-size: 0.88em; }
+      a { color: var(--accent); }
+      .kb { max-width: 760px; margin: 0 auto; padding: 2rem 16px 4rem; }
+      .crumb { font: 0.8rem var(--mono); text-decoration: none; color: var(--muted); }
+      h1 { margin: 0.25rem 0 0.5rem; line-height: 1.2; }
+      .meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; color: var(--muted); font-size: 0.85rem; margin: 0; }
+      .status { border: 1px solid var(--line); border-radius: 99px; padding: 0 0.6rem; }
+      aside { border-left: 4px solid var(--accent); padding: 0.5rem 1rem; margin: 1rem 0; background: var(--note-bg); }
+      aside.warn { border-color: var(--warn); background: var(--warn-bg); }
+      .sum { font-size: 1.1rem; }
+      .tags { color: var(--muted); font-size: 0.85em; }
+      .note { color: var(--muted); font-size: 0.85em; }
+      .wrong td { background: var(--warn-bg); }
+      .wrong td:last-child { color: var(--warn); font-weight: 600; }
+      .stamp { margin: 2rem 0 0; font: 0.85rem var(--mono); color: var(--muted); }
+      .stamp b { color: var(--accent); letter-spacing: 0.04em; }
+      footer { margin-top: 3rem; color: var(--muted); font-size: 0.8rem; border-top: 1px solid var(--line); padding-top: 1rem; }
+    </style>
+  </head>
+  <body>
+    <div class="kb">
+      <header>
+        <a class="crumb" href="/kb">support desk · kb</a>
+        <h1>#4471 · two causes in one ticket</h1>
+        <p class="meta">
+          <span>owner <b>support desk</b></span>
+          <span class="status">known</span>
+          <span>reviewed 2026-10-28 · 0 days ago</span>
+        </p>
+      </header>
+
+      <main>
+        <p>
+          #4471 was merged on the subject line alone, so it carries two bugs, not one. The table below
+          counts them in the export, by tenant locale and channel, with the logic the desk already runs
+          (<code>src/lib/kb/causes.ts</code> over <code>src/lib/kb/locales.ts</code>).
+        </p>
+
+        <h2>The two problems</h2>
+        <ul>
+          <li>
+            <strong>parser</strong> — the shared parser reads every date month first, and every tenant on
+            file writes the day first. Reports arrive through the app, by email, and through
+            <code>booking-v2</code> forms. Most of the ticket's reports are this one, and it keeps #4471.
+          </li>
+          <li>
+            <strong>hint</strong> — <code>booking-v3</code> prints <code>MM/DD/YYYY</code> under its date
+            field although the tenant writes the day first. People type what the hint tells them, and the
+            form reads it the other way round. Only the form channel, only the three tenants on
+            <code>booking-v3</code>. It was counted as part of #4471 and had no ticket of its own.
+          </li>
+        </ul>
+
+        <h2>Where the tickets are</h2>
+        <p>
+          Both are issues in this page's repo, <code>Timmlion/megadev-s01e03-what-it-shows</code>:
+          <a href="https://github.com/Timmlion/megadev-s01e03-what-it-shows/issues/1">#1 parser</a> and
+          <a href="https://github.com/Timmlion/megadev-s01e03-what-it-shows/issues/2">#2 hint</a>. Each
+          ticket carries the number of reports it covers, counted the same way as the table.
+        </p>
+
+        <p class="sum"><strong>412</strong> reports merged into #4471 · <strong>2</strong> causes</p>
+        <table>
+          <thead>
+            <tr><th>cause</th><th>reports</th><th>tagged as</th><th>tenants</th><th>seen</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>parser</code></td>
+              <td>379</td>
+              <td class="tags">parser ×356 · hint ×23</td>
+              <td>11</td>
+              <td>2026-04-01 → 2026-10-04</td>
+              <td>#4471</td>
+            </tr>
+            <tr class="wrong">
+              <td><code>hint</code></td>
+              <td>33</td>
+              <td class="tags">hint ×18 · parser ×15</td>
+              <td>3</td>
+              <td>2026-04-17 → 2026-09-22</td>
+              <td>not this ticket — no ticket of its own</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="note">5 reports read as a one-day move; filed under <code>parser</code> by tenant.</p>
+
+        <aside class="warn">
+          The last column of the table is how the desk read the ticket before this page: the
+          <code>hint</code> row says it has no ticket. It has one now, in the repo above. Nothing else in
+          the desk's reading changed.
+        </aside>
+
+        <h2>Why the merge hid it</h2>
+        <p>
+          Decision 0001 merges on the subject line, and every report about a flipped date matches the same
+          few subjects, so both bugs land in one ticket. Intake's tag does not separate them either: it is
+          guessed from the reporter's browser, not looked up from the tenant's locale, and it disagrees
+          with the tenant more often than not. The tenant directory is the only thing that tells the two
+          apart.
+        </p>
+
+        <h2>Lessons</h2>
+        <ul>
+          <li>A merge rule that never reads the body cannot tell two bugs with one symptom apart.</li>
+          <li>
+            Split by where the date is read (parser) and where it is typed (form hint), not by what the
+            reporter saw.
+          </li>
+        </ul>
+
+        <p class="stamp">desk ref <b>DR-ZZR5-ZR6M</b></p>
+      </main>
+
+      <footer>Pages are written by people. Tables and charts are built from data at render time.</footer>
+    </div>
+  </body>
+</html>
