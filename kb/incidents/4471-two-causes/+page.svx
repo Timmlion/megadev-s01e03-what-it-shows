@@ -2,7 +2,7 @@
 layout: runbook
 title: '#4471 · two causes in one ticket'
 owner: support desk
-status: known
+status: closed
 reviewed: 2026-10-28
 signature: v1.eyJzdWIiOiIzOTEiLCJhdWQiOiJjaGFsbGVuZ2U6d2hhdC1pdC1zaG93cyIsImlhdCI6MTc5MzE5MDUyMiwiZXhwIjoxNzkzMjc2OTIyfQ.ZJVBtdpU7VR7LZ3jnvzVrIccUbSyH0GTEWcLotFVJfI
 ---
@@ -44,6 +44,13 @@ the number of reports it covers, counted the same way as the table.
 The last column of the table is how the desk read the ticket before this page: the `hint` row says
 it has no ticket. It has one now, in the repo above. Nothing else in the desk's reading changed.
 </Callout>
+
+## Desk update
+
+#4471 closed 05 oct, one line per cause:
+
+- `parser` — **fixed**, `fix(dates): parse dd/mm for eu locales`. Ticket [#1](https://github.com/Timmlion/megadev-s01e03-what-it-shows/issues/1) closes as completed.
+- `hint` — **won't fix**, `booking-v3 form retired`. Ticket [#2](https://github.com/Timmlion/megadev-s01e03-what-it-shows/issues/2) closes as not planned: the form that told people to type month first is gone, so nothing in the parser needs to change for it.
 
 ## Why the merge hid it
 
